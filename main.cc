@@ -70,7 +70,7 @@ void book_cover() {
     cam.defocus_angle = 0.6;
     cam.focus_dist    = 10.0;
 
-    cam.render(world);
+    //cam.render(world);
 }
 
 void simple() {
@@ -108,7 +108,7 @@ void simple() {
     cam.lookat   = point3(0,0,-1);
     cam.vup      = vec3(0,1,0);
 
-    cam.render(world);
+    //cam.render(world);
 }
 
 void quads() {
@@ -143,7 +143,7 @@ void quads() {
 
     cam.defocus_angle = 0;
 
-    cam.render(world);
+    //cam.render(world);
 }
 
 void wowie() {
@@ -177,9 +177,9 @@ void wowie() {
 
     BVH_Node bvh(world, 0, world.objects.size());
     bvh.subdivide(world);
-    bvh.print();
+    //bvh.print();
 
-    cam.render(world);
+    cam.render(world, bvh);
 }
 
 void tri_test() {
@@ -208,7 +208,7 @@ void tri_test() {
 
     cam.defocus_angle = 0;
 
-    cam.render(world);
+    //cam.render(world);
 }
 
 int main() {

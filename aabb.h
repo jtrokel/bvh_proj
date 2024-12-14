@@ -1,7 +1,9 @@
 #ifndef AABB_H
 #define AABB_H
+
 #include "interval.h"
 #include "hittable.h"
+#include <vector>
 
 class aabb : hittable {
   public:

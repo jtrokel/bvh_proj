@@ -3,6 +3,7 @@
 #include "aabb.h"
 #include "hittable_list.h"
 #include "hittable.h"
+#include "ray.h"
 
 class BVH_Node {
   public:
@@ -83,6 +84,48 @@ class BVH_Node {
             right->isLeaf = true;
         }
     }
+
+    // Initialize stuff for BVH traversal
+    bool traverse(const ray& r, interval& ray_t, hit_record& rec, const hittable_list& world) {
+        hit_record temp_rec;
+        bool hit_anything = false;
+        auto closest_so_far = ray_t.max;
+
+        if (box.hit(r, ray_t, rec)) {
+            return std::get<0>(traverse_helper(r, ray_t, rec, world, closest_so_far));
+        }
+        return false;
+    }
+
+    // Traverse the BVH for ray hits
+    std::tuple<bool, double> traverse_helper(const ray& r, interval& ray_t, hit_record& rec,
+                                            const hittable_list& world, double closest_so_far) {
+        bool hit_anything = false;
+        hit_record temp_rec;
+
+
+        if (isLeaf == true) {
+            std::clog << "checking " << last_hittable - first_hittable + 1 << " objects" << std::endl;
+            for (int i = first_hittable; i < last_hittable + 1; i++) {
+                if (world.objects[i]->hit(r, interval(ray_t.min, closest_so_far), temp_rec)) {
+                    hit_anything = true;
+                    closest_so_far = temp_rec.t;
+                    rec = temp_rec;
+                }
+            }
+            return std::make_tuple(hit_anything, closest_so_far);
+        }
+
+        auto left_result = left->traverse_helper(r, ray_t, rec, world, closest_so_far);
+        hit_anything = std::get<0>(left_result);
+        closest_so_far = std::get<1>(left_result);
+
+        auto right_result = right->traverse_helper(r, ray_t, rec, world, closest_so_far);
+        hit_anything |= std::get<0>(right_result);
+        closest_so_far = std::get<1>(right_result);
+
+        return std::make_tuple(hit_anything, closest_so_far);
+    } 
 
     // Print the BVH tree
     void print() {
