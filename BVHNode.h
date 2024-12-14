@@ -42,9 +42,7 @@ class BVH_Node {
         int totalLeft =  i - first_hittable;
         int totalRight = last_hittable - j;
         BVH_Node leftNode(world, first_hittable, totalLeft);
-        left = &leftNode;
         BVH_Node rightNode(world, i+totalLeft, totalRight);
-        right = &rightNode;
         if (totalLeft > 2) leftNode.subdivide(world);
         if (totalRight > 2) rightNode.subdivide(world);
     }
