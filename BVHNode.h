@@ -42,18 +42,18 @@ class BVH_Node {
 
         int totalLeft =  i - first_hittable;
         int totalRight = last_hittable - j;
-
-        if (totalLeft != 0) {
-            BVH_Node leftNode(world, first_hittable, totalLeft);
-            left = &leftNode;
-            if (totalLeft > 2) leftNode.subdivide(world);
-        }
-        if (totalRight != 0) {
-            BVH_Node rightNode(world, i, totalRight);
-            right = &rightNode;
-            if (totalRight > 2) rightNode.subdivide(world);
+        if (totalLeft == 0 || totalRight == 0) {
+            return;
         }
         std::clog << "Left: " << totalLeft << " Right: " << totalRight << std::endl;
+        
+        BVH_Node leftNode(world, first_hittable, totalLeft);
+        left = &leftNode;
+        BVH_Node rightNode(world, i, totalRight);
+        right = &rightNode;
+
+        if (totalLeft > 2) leftNode.subdivide(world);
+        if (totalRight > 2) rightNode.subdivide(world);
         return;
     }
 
