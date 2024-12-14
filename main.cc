@@ -8,6 +8,8 @@
 #include "sphere.h"
 #include "tri.h"
 #include "BVHNode.h"
+#include <time.h>
+#include <fstream>
 
 #include <random>
 
@@ -148,13 +150,13 @@ void quads() {
 
 void wowie(int argc, char* argv[]) {
     if (argc != 4) {
-        std::clog << "Usage: " << argv[0] << " <no. of triangles> <'b' for bvh or 'n' for naive><max bvh tree depth>\n";
+        std::clog << "Usage: " << argv[0] << " <no. of triangles> <'b' for bvh or 'n' for naive 't' tests both bvh and naive and enumerates over all depths>\n";
         return;
     }
     char* end;
     long val = std::strtol(argv[1], &end, 10);
     int bvh_tree_depth = std::atoi(argv[3]);
-    bool good_args = (!end[0] && val >= 0 && bvh_tree_depth >= 0 && (argv[2][0] == 'b' || argv[2][0] == 'n'));
+    bool good_args = (!end[0] && val >= 0 && bvh_tree_depth >= 0 && (argv[2][0] == 'b' || argv[2][0] == 'n' || argv[2][0] == 't'));
     if (!good_args) {
         std::clog << "Usage: " << argv[0] << " <no. of triangles> <'b' for bvh or 'n' for naive><max bvh tree depth>\n";
         return;
@@ -187,12 +189,47 @@ void wowie(int argc, char* argv[]) {
     cam.vup      = vec3(0,1,0);
 
     cam.defocus_angle = 0;
+    if (argv[2][0] == 't') {
+        // Creating file for output
+        std::ofstream file("out.txt");
+        // Checking if file creation ws successful
+        if (!file) {
+            std::cerr << "Error opening file for writing." << std::endl;
+        }
+        clock_t start, end;
+        double cpu_time_used;
+        BVH_Node bvh(world, 0, world.objects.size());
+        bvh.subdivide(world, bvh_tree_depth);
+        start = clock();
+        cam.render(world, bvh, 'n');
+        end = clock();
+        cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+        file << "Time taken for Naive: " << cpu_time_used << "s\n";
+        std::clog << "Time taken for Naive: " << cpu_time_used << "s\n";
+        file << "bvh depth, time(seconds)\n";
+        for (int d = 1; d <= bvh_tree_depth; d++) {
+            start = clock();
+            BVH_Node bvh(world, 0, world.objects.size());
+            bvh.subdivide(world, d);
+            cam.render(world, bvh, 'b');
+            end = clock();
+            cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+            file << d << ", " <<  cpu_time_used << "\n";
+            std::clog << "bvh with depth: " << d << " took " <<  cpu_time_used << "s\n";
+        }
+        file.close();
+        
+    } else {
+        BVH_Node bvh(world, 0, world.objects.size());
+        bvh.subdivide(world, bvh_tree_depth);
+        cam.render(world, bvh, argv[2][0]);
+    }
 
-    BVH_Node bvh(world, 0, world.objects.size());
-    bvh.subdivide(world, bvh_tree_depth);
+    
     // bvh.print();
 
-    cam.render(world, bvh, argv[2][0]);
+    // cam.render(world, bvh, argv[2][0]);
+    
 }
 
 void tri_test() {
