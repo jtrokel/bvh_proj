@@ -43,7 +43,20 @@ class aabb : hittable {
     }
 
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
-        
+        // Overlap x, y, z
+        interval overlapIntervals[3];
+        for (int dim = 0; dim < 3; dim++) {
+            auto h1 = (bounds[dim].min - r.origin()[dim]) / r.direction()[dim];
+            auto h2 = (bounds[dim].max - r.origin()[dim]) / r.direction()[dim];
+            overlapIntervals[dim].min = std::min(h1, h2);
+            overlapIntervals[dim].max = std::max(h1, h2);
+        }
+        if (overlapIntervals[0].overlaps(overlapIntervals[1]) 
+            && overlapIntervals[0].overlaps(overlapIntervals[2])
+            && overlapIntervals[1].overlaps(overlapIntervals[2])) {
+                return true;
+        }
+        return false;
     }
 
 

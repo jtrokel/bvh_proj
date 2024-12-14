@@ -27,6 +27,10 @@ class interval {
         return x;
     }
 
+    bool overlaps(const interval& other) const {
+        return min <= other.max && other.min <= max;
+    }
+
     static const interval empty, universe;
 };
 
