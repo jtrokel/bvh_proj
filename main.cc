@@ -154,7 +154,7 @@ void wowie() {
     std::uniform_real_distribution<> dis(0, 1);
 
     // Triangles
-    for (int i = 0; i < 512; i++) {
+    for (int i = 0; i < 10; i++) {
         point3 v1 = point3(dis(gen) * 10 - 5, dis(gen) * 10 - 5, dis(gen) * 10 - 5);
         point3 v2 = v1 - point3(dis(gen) * 2 - 1, dis(gen) * 2 - 1, dis(gen) * 2 - 1);
         point3 v3 = v1 - point3(dis(gen) * 2 - 1, dis(gen) * 2 - 1, dis(gen) * 2 - 1);
@@ -174,6 +174,10 @@ void wowie() {
     cam.vup      = vec3(0,1,0);
 
     cam.defocus_angle = 0;
+
+    BVH_Node bvh(world, 0, world.objects.size());
+    bvh.subdivide(world);
+    bvh.traverse();
 
     cam.render(world);
 }
@@ -208,7 +212,7 @@ void tri_test() {
 }
 
 int main() {
-    switch (1) {
+    switch (4) {
         case 1: book_cover(); break;
         case 2: simple(); break;
         case 3: quads(); break;
