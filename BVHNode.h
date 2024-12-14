@@ -29,7 +29,7 @@ class BVH_Node {
         int axis = box.max_axis();
         interval max_interval = box.bounds[axis];
         double center = max_interval.min + max_interval.size()/2;
-        std::clog << "first hittable: " << first_hittable << " last hittable: " << last_hittable << std::endl;
+        std::clog << "first hittable: " << first_hittable << " last hittable: " << last_hittable << " world.objcects.size() " << world.objects.size() << std::endl;
         int i = first_hittable;
         int j = last_hittable;
         while (i <= j) {
