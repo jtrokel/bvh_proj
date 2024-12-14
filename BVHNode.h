@@ -25,11 +25,11 @@ class BVH_Node {
         }
     }
 
-    void subdivide(hittable_list world) {
+    void subdivide(hittable_list& world) {
         int axis = box.max_axis();
         interval max_interval = box.bounds[axis];
         double center = max_interval.min + max_interval.size()/2;
-        std::clog << "first hittable: " << first_hittable << " last hittable: " << last_hittable << " world.objcects.size() " << world.objects.size() << std::endl;
+
         int i = first_hittable;
         int j = last_hittable;
         while (i <= j) {
@@ -39,12 +39,22 @@ class BVH_Node {
                 std::swap(world.objects[i], world.objects[j--]);
             }
         }
+
         int totalLeft =  i - first_hittable;
         int totalRight = last_hittable - j;
-        BVH_Node leftNode(world, first_hittable, totalLeft);
-        BVH_Node rightNode(world, i+totalLeft, totalRight);
-        if (totalLeft > 2) leftNode.subdivide(world);
-        if (totalRight > 2) rightNode.subdivide(world);
+
+        if (totalLeft != 0) {
+            BVH_Node leftNode(world, first_hittable, totalLeft);
+            left = &leftNode;
+            if (totalLeft > 2) leftNode.subdivide(world);
+        }
+        if (totalRight != 0) {
+            BVH_Node rightNode(world, i, totalRight);
+            right = &rightNode;
+            if (totalRight > 2) rightNode.subdivide(world);
+        }
+        std::clog << "Left: " << totalLeft << " Right: " << totalRight << std::endl;
+        return;
     }
 
     void traverse() {
