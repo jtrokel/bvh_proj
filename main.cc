@@ -154,7 +154,6 @@ void wowie(int argc, char* argv[]) {
     char* end;
     long val = std::strtol(argv[1], &end, 10);
     int bvh_tree_depth = std::atoi(argv[3]);
-    std::clog << bvh_tree_depth << std::endl;
     bool good_args = (!end[0] && val >= 0 && bvh_tree_depth >= 0 && (argv[2][0] == 'b' || argv[2][0] == 'n'));
     if (!good_args) {
         std::clog << "Usage: " << argv[0] << " <no. of triangles> <'b' for bvh or 'n' for naive><max bvh tree depth>\n";
