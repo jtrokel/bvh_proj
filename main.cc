@@ -177,7 +177,7 @@ void wowie() {
 
     BVH_Node bvh(world, 0, world.objects.size());
     bvh.subdivide(world);
-    bvh.traverse();
+    bvh.print();
 
     cam.render(world);
 }
