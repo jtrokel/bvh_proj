@@ -12,7 +12,7 @@ class BVH_Node {
     bool isLeaf = false;
     int first_hittable, last_hittable; // Indices of the first and last triangles in the node
 
-   // Constructs BVH Node with proper bounds
+    // Constructs BVH Node with proper bounds
     BVH_Node(hittable_list& world, int start, int total) {
         first_hittable = start;
         last_hittable = start + total - 1;
@@ -25,6 +25,7 @@ class BVH_Node {
         }
     }
 
+    // Destructor
     ~BVH_Node() {
         if (left != nullptr) {
             delete left;
@@ -34,10 +35,13 @@ class BVH_Node {
         }
     }
 
+    // Divide the BVH node
     void subdivide(hittable_list& world) {
         std::vector<int> axes = box.max_axis();
         int i, totalLeft, totalRight = 0;
 
+        // Try the longest axis split first. If it wouldn't split any primitives,
+        // try the next longest axis.
         for (int axis : axes) {
             interval max_interval = box.bounds[axis];
             double center = max_interval.min + max_interval.size()/2;
@@ -59,6 +63,7 @@ class BVH_Node {
             }
         }
 
+        // If we couldn't split the primitives
         if (totalLeft == 0 || totalRight == 0) {
             isLeaf = true;
             return;
@@ -79,6 +84,7 @@ class BVH_Node {
         }
     }
 
+    // Print the BVH tree
     void print() {
         if (left != nullptr) {
             left->print();
