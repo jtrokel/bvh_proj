@@ -14,7 +14,7 @@ class tri : public hittable {
             centroid = point3(cx, cy, cz);
         }
 
-    point3 cent() const { return centroid; }
+    point3 cent() const override { return centroid; }
 
     // Moller-Trumbore intersection algorithm
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override {

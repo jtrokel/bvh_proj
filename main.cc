@@ -7,6 +7,7 @@
 #include "quad.h"
 #include "sphere.h"
 #include "tri.h"
+#include "BVHNode.h"
 
 #include <random>
 
@@ -53,6 +54,7 @@ void book_cover() {
     auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
     world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
 
+    BVH_Node bvh = BVH_Node(world, 0, world.objects.size());
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
@@ -206,7 +208,7 @@ void tri_test() {
 }
 
 int main() {
-    switch (4) {
+    switch (1) {
         case 1: book_cover(); break;
         case 2: simple(); break;
         case 3: quads(); break;

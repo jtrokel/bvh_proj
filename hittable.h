@@ -30,7 +30,6 @@ class hittable {
 
         virtual point3 mins() const { return point3(); }
         virtual point3 maxs() const { return point3(); }
-
         virtual point3 cent() const { return point3(); }
 };
 

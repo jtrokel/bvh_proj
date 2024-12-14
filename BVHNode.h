@@ -12,12 +12,13 @@ class BVH_Node {
     int first_hittable, last_hittable; // Indices of the first and last triangles in the node
 
    // Constructs BVH Node with proper bounds
-    BVH_Node(hittable_list hittables, int start, int total) {
+    BVH_Node(hittable_list& world, int start, int total) {
         for (int i = start; i < total; i++) {
             // Expand the box to include the bounds of the objects
             for (int j = 0; j < 3; j++) {
-                box.bounds[j].min = std::min(box.bounds[j], hittables.objects[i]->mins[j]);
-                box.bounds[j].max = std::max(box.bounds[j], hittables.objects[i]->maxs[j]);
+                box.bounds[j].min = std::min(box.bounds[j].min, world.objects[i]->mins()[j]);
+                // std::clog << "min: " << world.objects[i]->mins()[j] << std::endl;
+                box.bounds[j].max = std::max(box.bounds[j].max, world.objects[i]->maxs()[j]);
             }
         }
     }
