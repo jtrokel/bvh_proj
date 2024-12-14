@@ -13,6 +13,8 @@ class BVH_Node {
 
    // Constructs BVH Node with proper bounds
     BVH_Node(hittable_list& world, int start, int total) {
+        first_hittable = start;
+        last_hittable = start + total - 1;
         for (int i = start; i < total; i++) {
             // Expand the box to include the bounds of the objects
             for (int j = 0; j < 3; j++) {
@@ -27,6 +29,7 @@ class BVH_Node {
         int axis = box.max_axis();
         interval max_interval = box.bounds[axis];
         double center = max_interval.min + max_interval.size()/2;
+        std::clog << "first hittable: " << first_hittable << " last hittable: " << last_hittable << std::endl;
         int i = first_hittable;
         int j = last_hittable;
         while (i <= j) {
