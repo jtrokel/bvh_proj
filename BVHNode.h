@@ -7,8 +7,8 @@
 class BVH_Node {
   public:
     aabb box;
-    BVH_Node* left; // Left child
-    BVH_Node* right;// right child
+    BVH_Node* left = nullptr; // Left child
+    BVH_Node* right = nullptr;// right child
     int first_hittable, last_hittable; // Indices of the first and last triangles in the node
 
    // Constructs BVH Node with proper bounds
@@ -22,6 +22,15 @@ class BVH_Node {
                 // std::clog << "min: " << world.objects[i]->mins()[j] << std::endl;
                 box.bounds[j].max = std::max(box.bounds[j].max, world.objects[i]->maxs()[j]);
             }
+        }
+    }
+
+    ~BVH_Node() {
+        if (left != nullptr) {
+            delete left;
+        }
+        if (right != nullptr) {
+            delete right;
         }
     }
 
@@ -45,16 +54,16 @@ class BVH_Node {
         if (totalLeft == 0 || totalRight == 0) {
             return;
         }
-        std::clog << "Left: " << totalLeft << " Right: " << totalRight << std::endl;
         
-        BVH_Node leftNode(world, first_hittable, totalLeft);
-        left = &leftNode;
-        BVH_Node rightNode(world, i, totalRight);
-        right = &rightNode;
+        left = new BVH_Node(world, first_hittable, totalLeft);
+        right = new BVH_Node(world, i, totalRight);
 
-        if (totalLeft > 2) leftNode.subdivide(world);
-        if (totalRight > 2) rightNode.subdivide(world);
-        return;
+        if (totalLeft > 2) {
+            left->subdivide(world);
+        }
+        if (totalRight > 2) {
+            right->subdivide(world);
+        }
     }
 
     void traverse() {

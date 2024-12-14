@@ -154,7 +154,7 @@ void wowie() {
     std::uniform_real_distribution<> dis(0, 1);
 
     // Triangles
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 128; i++) {
         point3 v1 = point3(dis(gen) * 10 - 5, dis(gen) * 10 - 5, dis(gen) * 10 - 5);
         point3 v2 = v1 - point3(dis(gen) * 2 - 1, dis(gen) * 2 - 1, dis(gen) * 2 - 1);
         point3 v3 = v1 - point3(dis(gen) * 2 - 1, dis(gen) * 2 - 1, dis(gen) * 2 - 1);
