@@ -37,7 +37,13 @@ class BVH_Node {
     }
 
     // Divide the BVH node
-    void subdivide(hittable_list& world) {
+    void subdivide(hittable_list& world, int depth) {
+        // Cap tree depth
+        if (depth == 0) {
+            isLeaf = true;
+            return;
+        }
+
         std::vector<int> axes = box.max_axis();
         int i, totalLeft, totalRight = 0;
 
@@ -74,12 +80,12 @@ class BVH_Node {
         right = new BVH_Node(world, i, totalRight);
 
         if (totalLeft > 2) {
-            left->subdivide(world);
+            left->subdivide(world, depth - 1);
         } else {
             left->isLeaf = true;
         }
         if (totalRight > 2) {
-            right->subdivide(world);
+            right->subdivide(world, depth - 1);
         } else {
             right->isLeaf = true;
         }
@@ -103,9 +109,7 @@ class BVH_Node {
         bool hit_anything = false;
         hit_record temp_rec;
 
-
         if (isLeaf == true) {
-            std::clog << "checking " << last_hittable - first_hittable + 1 << " objects" << std::endl;
             for (int i = first_hittable; i < last_hittable + 1; i++) {
                 if (world.objects[i]->hit(r, interval(ray_t.min, closest_so_far), temp_rec)) {
                     hit_anything = true;

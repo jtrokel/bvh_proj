@@ -176,8 +176,8 @@ void wowie() {
     cam.defocus_angle = 0;
 
     BVH_Node bvh(world, 0, world.objects.size());
-    bvh.subdivide(world);
-    //bvh.print();
+    bvh.subdivide(world, 5);
+    // bvh.print();
 
     cam.render(world, bvh);
 }
