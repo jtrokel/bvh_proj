@@ -146,7 +146,19 @@ void quads() {
     //cam.render(world);
 }
 
-void wowie() {
+void wowie(int argc, char* argv[]) {
+    if (argc != 3) {
+        std::clog << "Usage: " << argv[0] << " <no. of triangles> <'b' for bvh or 'n' for naive>\n";
+        return;
+    }
+    char* end;
+    long val = std::strtol(argv[1], &end, 10);
+    bool good_args = (!end[0] && val >= 0 && (argv[2][0] == 'b' || argv[2][0] == 'n'));
+    if (!good_args) {
+        std::clog << "Usage: " << argv[0] << " <no. of triangles> <'b' for bvh or 'n' for naive>\n";
+        return;
+    }
+
     hittable_list world;
 
     std::random_device rd;
@@ -154,7 +166,7 @@ void wowie() {
     std::uniform_real_distribution<> dis(0, 1);
 
     // Triangles
-    for (int i = 0; i < 128; i++) {
+    for (int i = 0; i < val; i++) {
         point3 v1 = point3(dis(gen) * 10 - 5, dis(gen) * 10 - 5, dis(gen) * 10 - 5);
         point3 v2 = v1 - point3(dis(gen) * 2 - 1, dis(gen) * 2 - 1, dis(gen) * 2 - 1);
         point3 v3 = v1 - point3(dis(gen) * 2 - 1, dis(gen) * 2 - 1, dis(gen) * 2 - 1);
@@ -179,7 +191,7 @@ void wowie() {
     bvh.subdivide(world, 5);
     // bvh.print();
 
-    cam.render(world, bvh);
+    cam.render(world, bvh, argv[2][0]);
 }
 
 void tri_test() {
@@ -211,12 +223,12 @@ void tri_test() {
     //cam.render(world);
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     switch (4) {
         case 1: book_cover(); break;
         case 2: simple(); break;
         case 3: quads(); break;
-        case 4: wowie(); break;
+        case 4: wowie(argc, argv); break;
         case 5: tri_test(); break;
     }
 }

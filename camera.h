@@ -21,7 +21,7 @@ class camera {
     double defocus_angle = 0;  // Variation angle of rays through each pixel
     double focus_dist = 10;    // Distance from camera lookfrom point to plane of perfect focus
 
-    void render(const hittable_list& world, BVH_Node& bvh) {
+    void render(const hittable_list& world, BVH_Node& bvh, char mode) {
         initialize();
 
         std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
@@ -32,7 +32,7 @@ class camera {
                 color pixel_color(0, 0, 0);
                 for (int sample = 0; sample < samples_per_pixel; sample++) {
                     ray r = get_ray(i, j);
-                    pixel_color += ray_color(r, max_depth, world, bvh);
+                    pixel_color += ray_color(r, max_depth, world, bvh, mode);
                 }
                 write_color(std::cout, pixel_samples_scale * pixel_color);
             }
@@ -115,20 +115,30 @@ class camera {
         return center + (p[0] * defocus_disk_u) + (p[1] * defocus_disk_v);
     }
 
-    color ray_color(const ray& r, int depth, const hittable_list& world, BVH_Node& bvh) const {
+    color ray_color(const ray& r, int depth, const hittable_list& world, BVH_Node& bvh, char mode) const {
         // If we've exceeded the ray bounce limit, no more light is gathered.
         if (depth <= 0)
             return color(0,0,0);
         
         hit_record rec;
-        // if (world.hit(r, interval(0.001, infinity), rec)) {
-        auto init_interval = interval(0.001, infinity);
-        if (bvh.traverse(r, init_interval, rec, world)) {
-            ray scattered;
-            color attenuation;
-            if (rec.mat->scatter(r, rec, attenuation, scattered))
-                return attenuation * ray_color(scattered, depth-1, world, bvh);
+
+        if (mode == 'b') {
+            auto init_interval = interval(0.001, infinity);
+            if (bvh.traverse(r, init_interval, rec, world)) {
+                ray scattered;
+                color attenuation;
+                if (rec.mat->scatter(r, rec, attenuation, scattered))
+                    return attenuation * ray_color(scattered, depth-1, world, bvh, mode);
             return color(0,0,0);
+            }
+        } else {
+            if (world.hit(r, interval(0.001, infinity), rec)) {
+                ray scattered;
+                color attenuation;
+                if (rec.mat->scatter(r, rec, attenuation, scattered))
+                    return attenuation * ray_color(scattered, depth-1, world, bvh, mode);
+            return color(0,0,0);
+            }
         }
     
         vec3 unit_direction = unit_vector(r.direction());
@@ -139,4 +149,3 @@ class camera {
 };
 
 #endif
-

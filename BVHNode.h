@@ -93,10 +93,6 @@ class BVH_Node {
 
     // Initialize stuff for BVH traversal
     bool traverse(const ray& r, interval& ray_t, hit_record& rec, const hittable_list& world) {
-        hit_record temp_rec;
-        bool hit_anything = false;
-        auto closest_so_far = ray_t.max;
-
         if (box.hit(r, ray_t, rec)) {
             return traverse_helper(r, ray_t, rec, world);
         }
@@ -119,11 +115,19 @@ class BVH_Node {
             }
             return hit_anything;
         }
+        
+        bool left_result = false;
+        bool right_result = false;
 
-        auto left_result = left->traverse_helper(r, ray_t, rec, world);
+        if (left->box.hit(r, ray_t, rec)) {
+            left_result = left->traverse_helper(r, ray_t, rec, world);
+        }
 
         ray_t.max = left_result ? rec.t : ray_t.max;
-        auto right_result = right->traverse_helper(r, ray_t, rec, world);
+
+        if (right->box.hit(r, ray_t, rec)) {
+            right_result = right->traverse_helper(r, ray_t, rec, world);
+        }
 
         return left_result || right_result;
     } 
