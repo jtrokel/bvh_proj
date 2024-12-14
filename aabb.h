@@ -1,8 +1,9 @@
 #ifndef AABB_H
 #define AABB_H
 #include "interval.h"
+#include "hittable.h"
 
-class aabb {
+class aabb : hittable {
   public:
     // intervals for the x, y, and z axes
     interval bounds[3];
@@ -15,19 +16,36 @@ class aabb {
     }
 
     // Returns the axis with the largest interval size.
-    int max_axis() {
+    std::vector<int> max_axis() {
         auto x_size = bounds[0].size();
         auto y_size = bounds[1].size();
         auto z_size = bounds[2].size();
 
         if (x_size > y_size && x_size > z_size) {
-            return 0;
+            if (y_size > z_size) {
+                return {0, 1, 2};
+            } else {
+                return {0, 2, 1};
+            }
         } else if (y_size > z_size) {
-            return 1;
+            if (x_size > z_size) {
+                return {1, 0, 2};
+            } else {
+                return {1, 2, 0};
+            }
         } else {
-            return 2;
+            if (x_size > y_size) {
+                return {2, 0, 1};
+            } else {
+                return {2, 1, 0};
+            }
         }
     }
+
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
+        
+    }
+
 
 };
 
